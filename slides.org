@@ -1,0 +1,214 @@
+#+OPTIONS: num:nil toc:nil
+#+REVEAL_THEME: moon
+#+REVEAL_INIT_OPTIONS: transition:'none'
+#+REVEAL_PLUGINS: (highlight notes)
+#+Title: Introduction to GitHub Actions
+#+Author: Marius Bakke
+#+Email: marius.bakke@usit.uio.no
+
+* What are GitHub Actions?
+
+#+BEGIN_NOTES
+The goal of this presentation is to answer this question along with practical examples.
+#+END_NOTES
+
+* GitHub +Actions+ Events
+:PROPERTIES:
+:reveal-center: false
+:END:
+
+  * GitHub Actions is an event-driven declarative job scheduling system.
+#+ATTR_REVEAL: :frag (roll-in roll-in) :frag_idx (1 2)
+  * Actions are declared through workflow files, containing event triggers and jobs.
+  * Repositories can have multiple workflows.
+
+#+BEGIN_NOTES
+"CI system" mostly a side effect.
+#+END_NOTES
+
+* Custom workflow language
+
+  * YAML
+  * Shell scripts
+
+#+BEGIN_NOTES
+I know what you are thinking...
+#+END_NOTES
+
+* 
+:PROPERTIES:
+:reveal_background: ./images/what_could_go_wrong.jpg
+:reveal_background_size: contain
+:reveal_background_position: center
+:reveal_background_repeat: no-repeat
+:reveal_background_trans: slide
+:END:
+
+# :reveal_extra_attr: width: 800px; height: 400px; transition: 'cube'
+
+* Anatomy of a workflow
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id event-types
+#+BEGIN_SRC yaml
+  ---
+  on:
+    push:
+      branches: ['master']
+  jobs:
+    have-faith:
+      runs-on: ubuntu-latest
+      steps:
+        - run: echo "Good luck! 🤞"
+#+END_SRC
+
+#+BEGIN_NOTES
+Comparison to other CI systems.
+Jenkins, Gitlab runners, etc.
+Custom runners.
+#+END_NOTES
+
+* Event triggers
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id event-types
+#+BEGIN_SRC yaml
+  ---
+  on:
+    push:
+    pull_request:
+    workflow_dispatch:
+    schedule: '0 12 * * *'
+#+END_SRC
+
+#+BEGIN_NOTES
+The job can be dispatched from other jobs or through API calls.
+#+END_NOTES
+
+* Python example
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :code_attribs data-line-numbers='' :data_id python-example
+#+BEGIN_SRC yaml
+  jobs:
+    test:
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: Install Python
+          uses: actions/setup-python@v2
+          with:
+           python-version: 3.9
+        - name: Install dependencies
+          run: pip install -r requirements.txt
+        - name: Run tests
+          run: pytest -vv
+#+END_SRC
+
+#+BEGIN_NOTES
+Excerpt from https://github.com/unioslo/mreg
+#+END_NOTES
+
+* Test matrix
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :code_attribs data-line-numbers='3,4,5,12' :data_id python-example
+#+BEGIN_SRC yaml
+  jobs:
+    test:
+      strategy:
+        matrix:
+          python-version: ['3.7', '3.8', '3.9']
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: Install Python
+          uses: actions/setup-python@v2
+          with:
+            python-version: ${{ matrix.python-version }}
+        - name: Install dependencies
+          run: pip install -r requirements.txt
+        - name: Run tests
+          run: pytest -vv
+#+END_SRC
+
+* Artifacts
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :code_attribs data-line-numbers='7,13-17' :data_id artifact
+#+BEGIN_SRC yaml
+  jobs:
+    build:
+      steps:
+        - name: Create container image
+          run: >
+            guix pack -f docker
+            --root=nivlheim-image.tar.gz
+            --entry-point=bin/nivlheim
+            -S /etc/profile=etc/profile
+            --with-source=nivlheim=$PWD
+            nivlheim
+
+        - name: Upload artifact
+          uses: actions/upload-artifact@v2
+          with:
+            name: nivlheim-image.tar.gz
+            path: nivlheim-image.tar.gz
+#+END_SRC
+
+* Conditionals
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :code_attribs data-line-numbers='2,10,11,12' :data_id artifact
+#+BEGIN_SRC yaml
+  jobs:
+    build:
+      steps:
+        [...]
+        - name: Upload artifact
+          uses: actions/upload-artifact@v2
+          with:
+            name: nivlheim-image.tar.gz
+            path: nivlheim-image.tar.gz
+    publish:
+      if: ${{ github.ref == 'refs/heads/master' }}
+      needs: build
+      steps:
+        - name: Download artifact
+#+END_SRC
+
+#+BEGIN_NOTES
+No state is shared between jobs.
+#+END_NOTES
+
+* Service containers
+
+#+ATTR_REVEAL: :code_attribs data-line-numbers='4,6,8,10,12,13,14'
+#+BEGIN_SRC yaml
+  runs-on: ubuntu-latest
+  services:
+    postgres:
+      image: postgres:latest
+    mreg:
+      image: ghcr.io/unioslo/mreg:latest
+      env:
+        MREG_DB_HOST: postgres
+      ports:
+        - 8000:8000
+  steps:
+    - run: >
+        echo -ne 'test\nsource testsuite\nquit\n'
+        | mreg-cli -u ci -d example.org --url http://localhost:8000
+#+END_SRC
