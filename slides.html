@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Introduction to GitHub Actions</title>
+<meta name="author" content="(Marius Bakke)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="./reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="./reveal.js/dist/theme/moon.css" id="theme"/>
+
+<link rel="stylesheet" href="./reveal.js/lib/css/zenburn.css"/></head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Introduction to GitHub Actions</h1><h2 class="author">Marius Bakke</h2><p class="date">Created: 2021-09-08 Wed 15:34</p>
+</section>
+
+<section>
+<section id="slide-org2db0aba">
+<h2 id="org2db0aba">What are GitHub Actions?</h2>
+<aside class="notes">
+<p>
+The goal of this presentation is to answer this question along with practical examples.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-orgbbddc7d">
+<h2 id="orgbbddc7d">GitHub <del>Actions</del> Events</h2>
+<ul>
+<li>GitHub Actions is an event-driven declarative job scheduling system.</li>
+
+</ul>
+<ul>
+<li data-fragment-index="1" class="fragment roll-in">Actions are declared through workflow files, containing event triggers and jobs.</li>
+<li data-fragment-index="2" class="fragment roll-in">Repositories can have multiple workflows.</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+"CI system" mostly a side effect.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-org961eb6d">
+<h2 id="org961eb6d">Custom workflow language</h2>
+<ul>
+<li>YAML</li>
+<li>Shell scripts</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+I know what you are thinking&#x2026;
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-org029fd67" data-background="./images/what_could_go_wrong.jpg" data-background-size="contain" data-background-position="center" data-background-repeat="no-repeat" data-background-transition="slide">
+<h2 id="org029fd67"></h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org05fbc65" data-auto-animate>
+<h2 id="org05fbc65">Anatomy of a workflow</h2>
+<div class="org-src-container">
+
+<pre    data-id="event-types"><code class="yaml" >---
+on:
+  push:
+    branches: ['master']
+jobs:
+  have-faith:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Good luck! 🤞"
+</code></pre>
+</div>
+
+<aside class="notes">
+<p>
+Comparison to other CI systems.
+Jenkins, Gitlab runners, etc.
+Custom runners.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-orgaab4f94" data-auto-animate>
+<h2 id="orgaab4f94">Event triggers</h2>
+<div class="org-src-container">
+
+<pre    data-id="event-types"><code class="yaml" >---
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule: '0 12 * * *'
+</code></pre>
+</div>
+
+<aside class="notes">
+<p>
+The job can be dispatched from other jobs or through API calls.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-orga15a641" data-auto-animate>
+<h2 id="orga15a641">Python example</h2>
+<div class="org-src-container">
+
+<pre    data-id="python-example"><code class="yaml" data-line-numbers=''>jobs:
+  test:
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+         python-version: 3.9
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: pytest -vv
+</code></pre>
+</div>
+
+<aside class="notes">
+<p>
+Excerpt from <a href="https://github.com/unioslo/mreg">https://github.com/unioslo/mreg</a>
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-org9a102ac" data-auto-animate>
+<h2 id="org9a102ac">Test matrix</h2>
+<div class="org-src-container">
+
+<pre    data-id="python-example"><code class="yaml" data-line-numbers='3,4,5,12'>jobs:
+  test:
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: pytest -vv
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgcb13939" data-auto-animate>
+<h2 id="orgcb13939">Artifacts</h2>
+<div class="org-src-container">
+
+<pre    data-id="artifact"><code class="yaml" data-line-numbers='7,13-17'>jobs:
+  build:
+    steps:
+      - name: Create container image
+        run: &gt;
+          guix pack -f docker
+          --root=nivlheim-image.tar.gz
+          --entry-point=bin/nivlheim
+          -S /etc/profile=etc/profile
+          --with-source=nivlheim=$PWD
+          nivlheim
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: nivlheim-image.tar.gz
+          path: nivlheim-image.tar.gz
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org2c8e678" data-auto-animate>
+<h2 id="org2c8e678">Conditionals</h2>
+<div class="org-src-container">
+
+<pre    data-id="artifact"><code class="yaml" data-line-numbers='2,10,11,12'>jobs:
+  build:
+    steps:
+      [...]
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: nivlheim-image.tar.gz
+          path: nivlheim-image.tar.gz
+  publish:
+    if: ${{ github.ref == 'refs/heads/master' }}
+    needs: build
+    steps:
+      - name: Download artifact
+</code></pre>
+</div>
+
+<aside class="notes">
+<p>
+No state is shared between jobs.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-org2d2d9e1">
+<h2 id="org2d2d9e1">Service containers</h2>
+<div class="org-src-container">
+
+<pre   ><code class="yaml" data-line-numbers='4,6,6,8,10,12,13,14'>runs-on: ubuntu-latest
+services:
+  postgres:
+    image: postgres:latest
+  mreg:
+    image: ghcr.io/unioslo/mreg:latest
+    env:
+      MREG_DB_HOST: postgres
+    ports:
+      - 8000:8000
+steps:
+  - run: &gt;
+      echo -ne 'test\nsource testsuite\nquit\n'
+      | mreg-cli -u ci -d example.org --url http://localhost:8000
+</code></pre>
+</div>
+</section>
+</section>
+</div>
+</div>
+<script src="./reveal.js/dist/reveal.js"></script>
+<script src="./reveal.js/plugin/highlight/highlight.js"></script>
+<script src="./reveal.js/plugin/notes/notes.js"></script>
+
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+plugins: [RevealHighlight, RevealNotes],
+transition:'none'
+});
+
+</script>
+</body>
+</html>
