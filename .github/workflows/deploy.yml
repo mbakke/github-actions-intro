@@ -1,0 +1,35 @@
+name: Continuous Deployment
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Install Guix
+        uses: PromyLOPh/guix-install-action@v1
+      - name: Build
+        run: guix environment -C -m manifest.scm -- make
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "<>"
+      - name: Commit changes
+        run: |
+          git worktree add ${{ runner.temp }}/gh-pages gh-pages
+          rsync -av images/ slides.html ${{ runner.temp }}/gh-pages
+          if git -C ${{ runner.temp }}/gh-pages diff | grep -q . ; then
+            git -C ${{ runner.temp }}/gh-pages add .
+            git -C ${{ runner.temp }}/gh-pages commit -am "Deploy commit ${{ github.sha }}."
+          else
+            echo "Nothing to commit."
+          fi
+      - name: Push
+        run: git -C ${{ runner.temp }}/gh-pages push origin gh-pages
