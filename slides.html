@@ -28,8 +28,8 @@
 <div class="slides">
 
 <section>
-<section id="slide-org73dfa9e">
-<h2 id="org73dfa9e">What are GitHub Actions?</h2>
+<section id="slide-orgf491a75">
+<h2 id="orgf491a75">What are GitHub Actions?</h2>
 <aside class="notes">
 <p>
 The goal of this presentation is to answer this question along with practical examples.
@@ -40,8 +40,8 @@ The goal of this presentation is to answer this question along with practical ex
 </section>
 </section>
 <section>
-<section id="slide-org0e9d937">
-<h2 id="org0e9d937">GitHub <del>Actions</del> Events</h2>
+<section id="slide-org3b57140">
+<h2 id="org3b57140">GitHub <del>Actions</del> Events</h2>
 <ul>
 <li>GitHub Actions is an event-driven declarative job scheduling system.</li>
 
@@ -62,8 +62,8 @@ The goal of this presentation is to answer this question along with practical ex
 </section>
 </section>
 <section>
-<section id="slide-orgee30476">
-<h2 id="orgee30476">Custom workflow language</h2>
+<section id="slide-orgaa45f8f">
+<h2 id="orgaa45f8f">Custom workflow language</h2>
 <ul>
 <li>YAML</li>
 <li>Shell scripts</li>
@@ -80,14 +80,14 @@ I know what you are thinking&#x2026;
 </section>
 </section>
 <section>
-<section id="slide-orgfa4bd6a" data-background="./images/what_could_go_wrong.jpg" data-background-size="contain" data-background-position="center" data-background-repeat="no-repeat" data-background-transition="slide">
-<h2 id="orgfa4bd6a"></h2>
+<section id="slide-orgd3ab421" data-background="./images/what_could_go_wrong.jpg" data-background-size="contain" data-background-position="center" data-background-repeat="no-repeat" data-background-transition="slide">
+<h2 id="orgd3ab421"></h2>
 
 </section>
 </section>
 <section>
-<section id="slide-org59c8e50" data-auto-animate>
-<h2 id="org59c8e50">Anatomy of a workflow</h2>
+<section id="slide-org0a54dd0" data-auto-animate>
+<h2 id="org0a54dd0">Anatomy of a workflow</h2>
 <div class="org-src-container">
 
 <pre    data-id="event-types"><code class="yaml" >---
@@ -114,8 +114,8 @@ Custom runners.
 </section>
 </section>
 <section>
-<section id="slide-org49de798" data-auto-animate>
-<h2 id="org49de798">Event triggers</h2>
+<section id="slide-org58c581c" data-auto-animate>
+<h2 id="org58c581c">Event triggers</h2>
 <div class="org-src-container">
 
 <pre    data-id="event-types"><code class="yaml" >---
@@ -137,8 +137,8 @@ The job can be dispatched from other jobs or through API calls.
 </section>
 </section>
 <section>
-<section id="slide-org6abdb71" data-auto-animate>
-<h2 id="org6abdb71">Python example</h2>
+<section id="slide-org0ddfba6" data-auto-animate>
+<h2 id="org0ddfba6">Python example</h2>
 <div class="org-src-container">
 
 <pre    data-id="python-example"><code class="yaml" data-line-numbers=''>jobs:
@@ -167,8 +167,8 @@ Excerpt from <a href="https://github.com/unioslo/mreg">https://github.com/uniosl
 </section>
 </section>
 <section>
-<section id="slide-org4681243" data-auto-animate>
-<h2 id="org4681243">Test matrix</h2>
+<section id="slide-org43e8efa" data-auto-animate>
+<h2 id="org43e8efa">Test matrix</h2>
 <div class="org-src-container">
 
 <pre    data-id="python-example"><code class="yaml" data-line-numbers='3,4,5,12'>jobs:
@@ -193,8 +193,8 @@ Excerpt from <a href="https://github.com/unioslo/mreg">https://github.com/uniosl
 </section>
 </section>
 <section>
-<section id="slide-org788b067" data-auto-animate>
-<h2 id="org788b067">Artifacts</h2>
+<section id="slide-org229c9a8" data-auto-animate>
+<h2 id="org229c9a8">Artifacts</h2>
 <div class="org-src-container">
 
 <pre    data-id="artifact"><code class="yaml" data-line-numbers='7,13-17'>jobs:
@@ -220,8 +220,8 @@ Excerpt from <a href="https://github.com/unioslo/mreg">https://github.com/uniosl
 </section>
 </section>
 <section>
-<section id="slide-org4e9ea12" data-auto-animate>
-<h2 id="org4e9ea12">Conditionals</h2>
+<section id="slide-orgbe0951a" data-auto-animate>
+<h2 id="orgbe0951a">Conditionals</h2>
 <div class="org-src-container">
 
 <pre    data-id="artifact"><code class="yaml" data-line-numbers='2,10,11,12'>jobs:
@@ -251,8 +251,8 @@ No state is shared between jobs.
 </section>
 </section>
 <section>
-<section id="slide-org1688f6c">
-<h2 id="org1688f6c">Service containers</h2>
+<section id="slide-orga48f6f6">
+<h2 id="orga48f6f6">Service containers</h2>
 <div class="org-src-container">
 
 <pre   ><code class="yaml" data-line-numbers='4,6,8,10,12,13,14'>runs-on: ubuntu-latest
@@ -275,8 +275,8 @@ steps:
 </section>
 </section>
 <section>
-<section id="slide-org2d45a66">
-<h2 id="org2d45a66">The End</h2>
+<section id="slide-org1d41658">
+<h2 id="org1d41658">The End</h2>
 <p>
 The source of this presentation is available at
 <a href="https://github.com/mbakke/github-actions-intro">https://github.com/mbakke/github-actions-intro</a>.
