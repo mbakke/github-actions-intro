@@ -1,0 +1,15 @@
+* What is this?
+
+This repository contains slides for a talk about [[https://github.com/features/actions][GitHub Actions]] that I held at the [[https://www.uio.no/][University of Oslo]].
+
+* Where are the slides?
+
+The compiled HTML presentation can be found here: https://mbakke.github.io/github-actions-intro/.
+
+* How was it made?
+
+Credits to the incredible [[https://revealjs.com/][reveal.js]] and [[https://github.com/yjwen/org-reveal][org-reveal]] for making it trivial to create beautiful web presentations.
+
+* Can I fork this and use it for my team?
+
+Yes!  See [[COPYING]] for details.
