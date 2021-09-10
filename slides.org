@@ -1,4 +1,4 @@
-#+OPTIONS: num:nil toc:nil
+#+OPTIONS: num:nil toc:nil reveal_title_slide:nil
 #+REVEAL_THEME: moon
 #+REVEAL_INIT_OPTIONS: transition:'none'
 #+REVEAL_PLUGINS: (highlight notes)
