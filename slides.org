@@ -210,5 +210,19 @@ No state is shared between jobs.
   steps:
     - run: >
         echo -ne 'test\nsource testsuite\nquit\n'
-        | mreg-cli -u ci -d example.org --url http://localhost:8000
+        | mreg-cli -u ci --url http://localhost:8000
 #+END_SRC
+
+* The End
+
+  The source of this presentation is available at
+  https://github.com/mbakke/github-actions-intro.
+
+  Code samples were taken from:
+
+  * https://github.com/unioslo/mreg
+  * https://github.com/unioslo/mreg-cli
+  * https://github.com/unioslo/nivlheim
+
+  Official GitHub documentation can be found at
+  https://docs.github.com/en/actions/reference.
