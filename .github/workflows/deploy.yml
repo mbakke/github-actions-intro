@@ -24,7 +24,8 @@ jobs:
       - name: Commit changes
         run: |
           git worktree add ${{ runner.temp }}/gh-pages gh-pages
-          rsync -av images/ slides.html ${{ runner.temp }}/gh-pages
+          rsync -av images/ ${{ runner.temp }}/gh-pages/images
+          cp -L slides.html ${{ runner.temp }}/gh-pages
           if git -C ${{ runner.temp }}/gh-pages diff | grep -q . ; then
             git -C ${{ runner.temp }}/gh-pages add .
             git -C ${{ runner.temp }}/gh-pages commit -am "Deploy commit ${{ github.sha }}."
